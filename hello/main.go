@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -21,10 +22,13 @@ func Handler(ctx context.Context) (Response, error) {
 
 	body, err := json.Marshal(map[string]interface{}{
 		"message": "Go Serverless v1.0! Your function executed successfully!",
+		"env":     os.Getenv("NUMVERIFY_API_KEY"),
 	})
+
 	if err != nil {
 		return Response{StatusCode: 404}, err
 	}
+
 	json.HTMLEscape(&buf, body)
 
 	resp := Response{
