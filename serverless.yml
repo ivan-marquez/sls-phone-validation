@@ -14,3 +14,5 @@ functions:
       - http:
           path: hello
           method: get
+    environment:
+      NUMVERIFY_API_KEY: ${ssm:numverifyAPIKey}
