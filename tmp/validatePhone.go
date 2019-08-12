@@ -35,32 +35,38 @@ func main() {
 	fmt.Println(string(b))
 }
 
-func setRequest() (*http.Response, error) {
-	t := time.Duration(3 * time.Second)
-	client := http.Client{
-		Timeout: t,
-	}
-
-	req, err := http.NewRequest("GET", "http://apilayer.net/api/validate", nil)
-	if err != nil {
+func setRequest() (*http.Request, error) {
+  req, err := http.NewRequest("GET", "http://apilayer.net/api/validate", nil)
+    if err != nil {
 		log.Fatalln(err)
 		panic(err)
 	}
 
-	q := req.URL.Query()
-	q.Add("access_key", "")
-	q.Add("country_code", "")
-	q.Add("format", "1")
-	q.Add("number", os.Args[1])
+  q := req.URL.Query()
+  q.Add("access_key", "")
+  q.Add("country_code", "")
+  q.Add("format", "1")
+  q.Add("number", os.Args[1])
 
-	req.URL.RawQuery = q.Encode() //?
+  req.URL.RawQuery = q.Encode() //?
+  
+  return req, nil	
+}
 
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatalln(err)
+func wip() (*http.Response, error) {
+  t := time.Duration(3 * time.Second)
+  client := http.Client{
+    Timeout: t,
+  }
+  
+  req := setRequest()
+  
+  res, err := client.Do(req)
+    if err != nil {
+	  log.Fatalln(err)
 	}
 
-	defer res.Body.Close()
+  defer res.Body.Close()
 
-	return res, nil
+  return res, nil
 }
