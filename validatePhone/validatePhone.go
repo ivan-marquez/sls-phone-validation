@@ -16,42 +16,38 @@ type APIResponse struct {
 	LineType string
 }
 
-func main() {
-	//res := APIResponse{
-	//	LineType: "mobile",
-	//	Number:   "17873626144",
-	//	Valid:    true,
-	//}
+func validatePhone(phoneNumber string) APIResponse {
+	b := make([]byte, 350)
+	var response APIResponse
 
-	//b, err := json.Marshal(res)
-
-	//if err != nil {
-	//	fmt.Fprintf(os.Stderr, "error: %v\n", err)
-	//	os.Exit(1)
-	//}
-
-	res, err := getPhoneValidation(os.Args[1])
+	res, err := getPhoneValidation(phoneNumber)
 	if err != nil {
 		log.Fatalln(err)
 		panic(err)
 	}
 
 	defer res.Body.Close()
-	data := ioutil.ReadAll(res.Body)
 
-	fmt.Println(data)
+	err = json.Unmarshal(b, &response)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+
+	return response
 }
 
 func createRequest(phoneNumber string) (*http.Request, error) {
 	const urlEndpoint = "http://apilayer.net/api/validate"
-	req, err := http.NewRequest("GET", urlEnpoint, nil)
+	req, err := http.NewRequest("GET", urlEndpoint, nil)
 	if err != nil {
 		log.Fatalln(err)
 		panic(err)
 	}
 
 	q := req.URL.Query()
-	q.Add("access_key", "")
+	q.Add("access_key", "e0ccae9a9264df43761e785a5434363b")
 	q.Add("country_code", "")
 	q.Add("format", "1")
 	q.Add("number", phoneNumber)
@@ -67,14 +63,15 @@ func getPhoneValidation(phoneNumber string) (*http.Response, error) {
 		Timeout: t,
 	}
 
-	req := createRequest(phoneNumber)
-
-	res, err := client.Do(req)
+	req, err := createRequest(phoneNumber)
 	if err != nil {
-		// TODO: how to handle this error?
 		log.Fatalln(err)
 	}
 
-	defer res.Body.Close()
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	return res, nil
 }
