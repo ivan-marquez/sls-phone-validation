@@ -8,11 +8,11 @@ package:
   include:
     - ./bin/**
 functions:
-  hello:
-    handler: bin/hello
+  validatePhone:
+    handler: bin/validatePhone
     events:
       - http:
-          path: hello
+          path: validatePhone
           method: get
     environment:
       NUMVERIFY_API_KEY: ${ssm:numverifyAPIKey}
