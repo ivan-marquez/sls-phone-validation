@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 
@@ -21,6 +22,17 @@ type Response events.APIGatewayProxyResponse
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
 	var buf bytes.Buffer
 	log.Println(request.QueryStringParameters)
+
+	phoneNumber, ok := request.QueryStringParameters["phoneNumber"]
+
+	if !ok {
+		// TODO: return BAD REQUEST
+	}
+
+	// TODO: json.Marshal response object
+	res := ValidateMobilePhone(phoneNumber)
+	fmt.Println(phoneNumber, res)
+
 	body, err := json.Marshal(map[string]interface{}{
 		"message": "Go Serverless v1.0! Your function executed successfully!",
 		"env":     os.Getenv("NUMVERIFY_API_KEY"),
