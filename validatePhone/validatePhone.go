@@ -16,7 +16,8 @@ type APIResponse struct {
 	LineType string
 }
 
-func validatePhone(phoneNumber string) APIResponse {
+// ValidateMobilePhone function checks if passed phone number is valid
+func ValidateMobilePhone(phoneNumber string) APIResponse {
 	b := make([]byte, 350)
 	var response APIResponse
 
@@ -35,6 +36,11 @@ func validatePhone(phoneNumber string) APIResponse {
 		os.Exit(1)
 	}
 
+	// TODO: check if this is valid
+	if response.LineType != "mobile" {
+		response.Valid = false
+	}
+
 	return response
 }
 
@@ -47,12 +53,10 @@ func createRequest(phoneNumber string) (*http.Request, error) {
 	}
 
 	q := req.URL.Query()
-	q.Add("access_key", "e0ccae9a9264df43761e785a5434363b")
+	q.Add("access_key", os.Getenv("NUMVERIFY_API_KEY"))
 	q.Add("country_code", "")
 	q.Add("format", "1")
 	q.Add("number", phoneNumber)
-
-	req.URL.RawQuery = q.Encode() //?
 
 	return req, nil
 }
