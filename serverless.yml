@@ -9,6 +9,7 @@ package:
     - ./bin/**
 functions:
   validatePhone:
+    name: validatePhone
     handler: bin/validatePhone
     events:
       - http:

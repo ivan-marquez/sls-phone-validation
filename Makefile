@@ -2,7 +2,7 @@
 
 build:
 	dep ensure -v
-	env GOOS=linux go build -ldflags="-s -w" -o bin/validatePhone validatePhone/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/validatePhone validatePhone/main.go validatePhone/validatePhone.go
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
