@@ -36,14 +36,16 @@ func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 
 	json.HTMLEscape(&buf, body)
 
+	headers := map[string]string{
+		"Content-Type":           "application/json",
+		"X-MyCompany-Func-Reply": "hello-handler",
+	}
+
 	resp := Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
 		Body:            buf.String(),
-		Headers: map[string]string{
-			"Content-Type":           "application/json",
-			"X-MyCompany-Func-Reply": "hello-handler",
-		},
+		Headers:         headers,
 	}
 
 	return resp, nil

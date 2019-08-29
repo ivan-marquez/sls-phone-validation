@@ -30,8 +30,8 @@ func ValidateMobilePhone(phoneNumber string) (*APIResponse, error) {
 }
 
 func createRequest(phoneNumber string) *http.Request {
-	const urlEndpoint = "http://apilayer.net/api/validate"
-	req, _ := http.NewRequest("GET", urlEndpoint, nil)
+	const url = "http://apilayer.net/api/validate"
+	req, _ := http.NewRequest("GET", url, nil)
 
 	q := req.URL.Query()
 	q.Add("access_key", os.Getenv("NUMVERIFY_API_KEY"))
