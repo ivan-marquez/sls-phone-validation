@@ -2,11 +2,8 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
-	"fmt"
-	"log"
-	"os"
+	"errors"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -14,29 +11,24 @@ import (
 
 // Response is of type APIGatewayProxyResponse since we're leveraging the
 // AWS Lambda Proxy Request functionality (default behavior)
-//
-// https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
 type Response events.APIGatewayProxyResponse
 
 // Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
+func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 	var buf bytes.Buffer
-	log.Println(request.QueryStringParameters)
 
 	phoneNumber, ok := request.QueryStringParameters["phoneNumber"]
 
 	if !ok {
-		// TODO: return BAD REQUEST
+		return Response{StatusCode: 400}, errors.New("phoneNumber not provided")
 	}
 
-	// TODO: json.Marshal response object
-	res := ValidateMobilePhone(phoneNumber)
-	fmt.Println(phoneNumber, res)
+	res, err := ValidateMobilePhone(phoneNumber)
+	if err != nil {
+		return Response{StatusCode: 500}, err
+	}
 
-	body, err := json.Marshal(map[string]interface{}{
-		"message": "Go Serverless v1.0! Your function executed successfully!",
-		"env":     os.Getenv("NUMVERIFY_API_KEY"),
-	})
+	body, err := json.Marshal(res)
 
 	if err != nil {
 		return Response{StatusCode: 404}, err

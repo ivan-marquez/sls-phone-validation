@@ -1,9 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -13,44 +12,26 @@ import (
 type APIResponse struct {
 	Valid    bool
 	Number   string
-	LineType string
+	LineType string `json:"line_type"`
 }
 
 // ValidateMobilePhone function checks if passed phone number is valid
-func ValidateMobilePhone(phoneNumber string) APIResponse {
-	b := make([]byte, 350)
-	var response APIResponse
-
-	res, err := getPhoneValidation(phoneNumber)
+func ValidateMobilePhone(phoneNumber string) (*APIResponse, error) {
+	response, err := getPhoneValidation(phoneNumber)
 	if err != nil {
-		log.Fatalln(err)
-		panic(err)
+		return nil, err
 	}
 
-	defer res.Body.Close()
-
-	err = json.Unmarshal(b, &response)
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
-	}
-
-	// TODO: check if this is valid
 	if response.LineType != "mobile" {
 		response.Valid = false
 	}
 
-	return response
+	return response, nil
 }
 
-func createRequest(phoneNumber string) (*http.Request, error) {
+func createRequest(phoneNumber string) *http.Request {
 	const urlEndpoint = "http://apilayer.net/api/validate"
-	req, err := http.NewRequest("GET", urlEndpoint, nil)
-	if err != nil {
-		log.Fatalln(err)
-		panic(err)
-	}
+	req, _ := http.NewRequest("GET", urlEndpoint, nil)
 
 	q := req.URL.Query()
 	q.Add("access_key", os.Getenv("NUMVERIFY_API_KEY"))
@@ -58,24 +39,36 @@ func createRequest(phoneNumber string) (*http.Request, error) {
 	q.Add("format", "1")
 	q.Add("number", phoneNumber)
 
-	return req, nil
+	req.URL.RawQuery = q.Encode()
+
+	return req
 }
 
-func getPhoneValidation(phoneNumber string) (*http.Response, error) {
+func getPhoneValidation(phoneNumber string) (*APIResponse, error) {
+	var response APIResponse
+
 	const t = time.Duration(3 * time.Second)
 	client := http.Client{
 		Timeout: t,
 	}
 
-	req, err := createRequest(phoneNumber)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	req := createRequest(phoneNumber)
 
 	res, err := client.Do(req)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
-	return res, nil
+	defer res.Body.Close()
+
+	b := make([]byte, 350)
+	res.Body.Read(b)
+	b = bytes.Trim(b, "\x00")
+
+	err = json.Unmarshal(b, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response, nil
 }
