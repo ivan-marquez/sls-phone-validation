@@ -15,5 +15,21 @@ functions:
       - http:
           path: validatePhone
           method: get
+          request:
+            parameters:
+              querystrings:
+                phoneNumber: true
     environment:
       NUMVERIFY_API_KEY: ${ssm:numverifyAPIKey}
+resources:
+  Resources:
+    ApiGatewayMethodValidatephoneGet:
+      Properties:
+        RequestParameters:
+          method.request.path.phoneNumber: true
+        Integration:
+          RequestParameters:
+            integration.request.path.phoneNumber: method.request.path.phoneNumber
+            CacheNamespace: ApiGatewayMethodValidatephoneGetCacheNS
+            CacheKeyParameters:
+              - method.request.path.phoneNumber
