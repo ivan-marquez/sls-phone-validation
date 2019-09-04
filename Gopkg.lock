@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:a52438939d72dce68f5aceb732a93bcc053478258f3198ad3bc11ad134d39de8"
+  digest = "1:aaa4985bc6d91b26f2b0d24df5fc331df6a70d6d55f06b9b8ad6d5f219a884a5"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
@@ -12,8 +12,8 @@
     "lambdacontext",
   ]
   pruneopts = ""
-  revision = "ec56cb71d7d3e87e21d2151131d4360c25a304d8"
-  version = "v1.13.0"
+  revision = "fe4f484f034626157ca7deb2ddb418ffac99a9a6"
+  version = "v1.13.1"
 
 [solve-meta]
   analyzer-name = "dep"
