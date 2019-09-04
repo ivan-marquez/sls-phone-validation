@@ -22,3 +22,6 @@ vendor
 
 # VS Code settings
 .vscode/
+
+# node dependencies
+node_modules/
