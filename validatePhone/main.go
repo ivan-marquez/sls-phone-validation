@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -20,7 +19,13 @@ func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 	phoneNumber, ok := request.QueryStringParameters["phoneNumber"]
 
 	if !ok {
-		return Response{StatusCode: 400}, errors.New("phoneNumber not provided")
+		return Response{
+			Headers: map[string]string{
+				"Content-Type": "application/json",
+			},
+			StatusCode: 400,
+			Body:       `{"error": "phoneNumber not provided"}`,
+		}, nil
 	}
 
 	res, err := ValidateMobilePhone(phoneNumber)

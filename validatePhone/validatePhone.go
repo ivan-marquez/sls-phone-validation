@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -44,9 +43,7 @@ func createRequest(phoneNumber string) *http.Request {
 	return req
 }
 
-func getPhoneValidation(phoneNumber string) (*APIResponse, error) {
-	var response APIResponse
-
+func getPhoneValidation(phoneNumber string) (response *APIResponse, err error) {
 	const t = time.Duration(3 * time.Second)
 	client := http.Client{
 		Timeout: t,
@@ -61,14 +58,9 @@ func getPhoneValidation(phoneNumber string) (*APIResponse, error) {
 
 	defer res.Body.Close()
 
-	b := make([]byte, 350)
-	res.Body.Read(b)
-	b = bytes.Trim(b, "\x00")
-
-	err = json.Unmarshal(b, &response)
-	if err != nil {
+	if err = json.NewDecoder(res.Body).Decode(&response); err != nil {
 		return nil, err
 	}
 
-	return &response, nil
+	return response, nil
 }
