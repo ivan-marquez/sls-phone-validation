@@ -20,23 +20,26 @@ func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 
 	if !ok {
 		return Response{
-			Headers: map[string]string{
-				"Content-Type": "application/json",
-			},
 			StatusCode: 400,
-			Body:       `{"error": "phoneNumber not provided"}`,
+			Body:       "phoneNumber not provided",
 		}, nil
 	}
 
 	res, err := ValidateMobilePhone(phoneNumber)
 	if err != nil {
-		return Response{StatusCode: 500}, err
+		return Response{
+			StatusCode: 500,
+			Body:       err.Error(),
+		}, nil
 	}
 
 	body, err := json.Marshal(res)
 
 	if err != nil {
-		return Response{StatusCode: 404}, err
+		return Response{
+			StatusCode: 500,
+			Body:       err.Error(),
+		}, nil
 	}
 
 	json.HTMLEscape(&buf, body)
@@ -46,14 +49,12 @@ func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 		"X-MyCompany-Func-Reply": "hello-handler",
 	}
 
-	resp := Response{
+	return Response{
 		StatusCode:      200,
 		IsBase64Encoded: false,
 		Body:            buf.String(),
 		Headers:         headers,
-	}
-
-	return resp, nil
+	}, nil
 }
 
 func main() {
