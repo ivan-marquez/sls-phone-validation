@@ -12,6 +12,9 @@ import (
 // AWS Lambda Proxy Request functionality (default behavior)
 type Response events.APIGatewayProxyResponse
 
+// ErrPhoneNotProvided error message
+const ErrPhoneNotProvided string = "phoneNumber not provided"
+
 // Handler is our lambda handler invoked by the `lambda.Start` function call
 func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 	var buf bytes.Buffer
@@ -21,7 +24,7 @@ func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 	if !ok {
 		return Response{
 			StatusCode: 400,
-			Body:       "phoneNumber not provided",
+			Body:       ErrPhoneNotProvided,
 		}, nil
 	}
 
