@@ -43,7 +43,7 @@ func createRequest(phoneNumber string) *http.Request {
 	return req
 }
 
-func getPhoneValidation(phoneNumber string) (response *APIResponse, err error) {
+var getPhoneValidation = func(phoneNumber string) (response *APIResponse, err error) {
 	const t = time.Duration(3 * time.Second)
 	client := http.Client{
 		Timeout: t,
