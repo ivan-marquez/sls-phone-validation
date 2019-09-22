@@ -1,7 +1,7 @@
 .PHONY: build clean deploy
 
-build:
-	dep ensure -v
+build: gomodgen
+	export GO111MODULE=on
 	env GOOS=linux go build -ldflags="-s -w" -o bin/validatePhone validatePhone/main.go validatePhone/validatePhone.go
 
 clean:
@@ -9,3 +9,7 @@ clean:
 
 deploy: clean build
 	sls deploy --verbose
+
+gomodgen:
+	chmod u+x gomod.sh
+	./gomod.sh
