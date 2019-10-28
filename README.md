@@ -4,10 +4,11 @@
 
 ## Components
 
-**API Layer**
+**API Layer**  
 `GET` endpoint using API Gateway to validate mobile phone numbers.
 
-`/validatePhone?phoneNumber=<mobile phone number>`  
+`/validatePhone?phoneNumber=<mobile phone number>`    
+
 This endpoint will invoke a lambda function written in Go that will send a request to the Numverify API. The response will be cached for 3600 seconds (1 hour) using API Gateway parameter caching integration.
 
 **CI/CD**  
