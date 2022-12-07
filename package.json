@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
-    "serverless": "^1.51.0",
+    "serverless": "^3.25.1",
     "serverless-api-stage": "^1.4.0",
     "serverless-plugin-bind-deployment-id": "^1.1.0"
   }
